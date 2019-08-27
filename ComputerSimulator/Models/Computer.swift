@@ -51,8 +51,39 @@ struct Computer {
         return .Success(nil)
     }
     
-    func execute() {
-        // TODO: Implement execute
+    // TODO: Improve implementation and error handling
+    mutating func execute() {
+        var instruction: String
+        var argument: Int?
+        repeat {
+            (instruction, argument) = stack.peek(at: programCounter)
+            
+            switch instruction {
+            case Instruction.MULT.rawValue:
+                computerMultiply()
+            case Instruction.CALL.rawValue:
+                guard let arg = argument else {
+                    print("Argument cannot be nil")
+                    return
+                }
+                computerCall(argument: arg)
+            case Instruction.RET.rawValue:
+                computerReturn()
+            case Instruction.PRINT.rawValue:
+                computerPrint()
+            case Instruction.PUSH.rawValue:
+                guard let arg = argument else {
+                    print("Argument cannot be nil")
+                    return
+                }
+                computerPush(argument: arg)
+            default:
+                print("Invalid instruction")
+            }
+            programCounter += 1
+        }
+        while instruction != Instruction.STOP.rawValue
+        
     }
     
     private mutating func computerMultiply() -> Result {

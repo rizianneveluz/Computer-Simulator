@@ -38,4 +38,8 @@ struct Stack {
         stack.insert(item, at: index)
         return .Success(nil)
     }
+    
+    func peek(at index: Int) -> StackItem {
+        return stack[index]
+    }
 }
