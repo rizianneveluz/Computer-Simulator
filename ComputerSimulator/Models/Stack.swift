@@ -10,9 +10,11 @@ import Foundation
 
 struct Stack {
 
-    private var stack = [String]()
+    internal typealias StackItem = (String, Int?)
+
+    private var stack = [StackItem]()
     
-    var pointer: Int {
+    var size: Int {
         return stack.count
     }
 
@@ -20,11 +22,20 @@ struct Stack {
         stack.reserveCapacity(size)
     }
 
-    mutating func push(item: String) {
+    mutating func push(_ item: StackItem) {
         stack.append(item)
     }
     
-    mutating func pop() -> String? {
+    mutating func pop() -> StackItem? {
         return stack.popLast()
+    }
+    
+    mutating func insert(_ item: StackItem, at index: Int) -> Result{
+        if index >= size {
+            return .Failure("Program counter is out of bounds.")
+        }
+
+        stack.insert(item, at: index)
+        return .Success(nil)
     }
 }
