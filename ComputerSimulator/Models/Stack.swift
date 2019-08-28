@@ -12,34 +12,35 @@ struct Stack {
 
     internal typealias StackItem = (String, Int?)
 
-    private var stack = [StackItem]()
+    private var stack: [StackItem?]
     
     var size: Int {
         return stack.count
     }
 
     init(size: Int) {
-        stack.reserveCapacity(size)
+        //stack.reserveCapacity(size)
+        stack = [StackItem?](repeating: nil, count: size)
     }
 
     mutating func push(_ item: StackItem) {
         stack.append(item)
     }
     
-    mutating func pop() -> StackItem? {
+    mutating func pop() -> StackItem?? {
         return stack.popLast()
     }
     
     mutating func insert(_ item: StackItem, at index: Int) -> Result{
-        if index >= size {
+        if size > 0, index >= size {
             return .Failure("Program counter is out of bounds.")
         }
 
-        stack.insert(item, at: index)
+        stack[index] = item
         return .Success(nil)
     }
     
-    func peek(at index: Int) -> StackItem {
+    func peek(at index: Int) -> StackItem? {
         return stack[index]
     }
 }

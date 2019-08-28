@@ -53,41 +53,42 @@ struct Computer {
     
     // TODO: Improve implementation and error handling
     mutating func execute() {
-        var instruction: String
+        var instruction = ""
         var argument: Int?
         repeat {
-            (instruction, argument) = stack.peek(at: programCounter)
-            
-            switch instruction {
-            case Instruction.MULT.rawValue:
-                computerMultiply()
-            case Instruction.CALL.rawValue:
-                guard let arg = argument else {
                     print("Argument cannot be nil")
-                    return
+            if let (instruction, argument) = stack.peek(at: programCounter) {
+                switch instruction {
+                case Instruction.MULT.rawValue:
+                    computerMultiply()
+                case Instruction.CALL.rawValue:
+                    guard let arg = argument else {
+                        return
+                    }
+                    computerCall(argument: arg)
+                case Instruction.RET.rawValue:
+                    computerReturn()
+                case Instruction.PRINT.rawValue:
+                    computerPrint()
+                case Instruction.PUSH.rawValue:
+                    guard let arg = argument else {
+                        return
+                    }
+                    computerPush(argument: arg)
+                default:
                 }
-                computerCall(argument: arg)
-            case Instruction.RET.rawValue:
-                computerReturn()
-            case Instruction.PRINT.rawValue:
-                computerPrint()
-            case Instruction.PUSH.rawValue:
-                guard let arg = argument else {
-                    print("Argument cannot be nil")
-                    return
+                
+                if (instruction != Instruction.CALL.rawValue && instruction != Instruction.RET.rawValue) {
+                    programCounter += 1
                 }
-                computerPush(argument: arg)
-            default:
-                print("Invalid instruction")
+                
             }
-            programCounter += 1
         }
         while instruction != Instruction.STOP.rawValue
-        
     }
     
     private mutating func computerMultiply() -> Result {
-        guard let (_, arg1) = stack.pop(), let (_, arg2) = stack.pop(), let multiplicand1 = arg1, let multiplicand2 = arg2 else {
+        guard let (_, arg1) = stack.pop() ?? nil, let (_, arg2) = stack.pop() ?? nil, let multiplicand1 = arg1, let multiplicand2 = arg2 else {
             return .Failure("Cannot execute MULT instruction. An item in the stack is not a valid integer.")
         }
         
@@ -104,7 +105,11 @@ struct Computer {
     }
     
     private mutating func computerReturn() -> Result {
-        guard let (_, address) = stack.pop(), let addr = address, addr >= stack.size else {
+        guard let (_, address) = stack.pop() ?? nil, let addr = address else {
+            return .Failure("Cannot execute RET instruction. Address is not a valid integer.")
+        }
+
+        if (addr >= stack.size) {
             return .Failure("Cannot execute RET instruction. Address is out of bounds.")
         }
 
@@ -118,7 +123,7 @@ struct Computer {
     }
     
     private mutating func computerPrint() -> Result {
-        guard let (_, arg) = stack.pop(), let value = arg else {
+        guard let (_, arg) = stack.pop() ?? nil, let value = arg else {
             return .Failure("Cannot execute PRINT instruction. Value is not a valid integer.")
         }
         
