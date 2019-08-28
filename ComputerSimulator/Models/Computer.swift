@@ -56,7 +56,6 @@ struct Computer {
         var instruction = ""
         var argument: Int?
         repeat {
-                    print("Argument cannot be nil")
             if let (instruction, argument) = stack.peek(at: programCounter) {
                 switch instruction {
                 case Instruction.MULT.rawValue:
@@ -76,6 +75,7 @@ struct Computer {
                     }
                     computerPush(argument: arg)
                 default:
+                    return
                 }
                 
                 if (instruction != Instruction.CALL.rawValue && instruction != Instruction.RET.rawValue) {

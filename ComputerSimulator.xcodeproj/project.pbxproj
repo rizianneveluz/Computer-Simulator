@@ -16,7 +16,7 @@
 		7133F82623154E18001D434F /* ComputerSimulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F82523154E18001D434F /* ComputerSimulatorTests.swift */; };
 		7133F83523155133001D434F /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F83423155133001D434F /* Computer.swift */; };
 		7133F8372315514B001D434F /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F8362315514B001D434F /* Stack.swift */; };
-		7133F83923155157001D434F /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F83823155157001D434F /* Application.swift */; };
+		7133F83923155157001D434F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F83823155157001D434F /* Parser.swift */; };
 		7133F83B23155183001D434F /* Input.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7133F83A23155183001D434F /* Input.txt */; };
 /* End PBXBuildFile section */
 
@@ -45,7 +45,7 @@
 		7133F83223154FC3001D434F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7133F83423155133001D434F /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
 		7133F8362315514B001D434F /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
-		7133F83823155157001D434F /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
+		7133F83823155157001D434F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		7133F83A23155183001D434F /* Input.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Input.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -116,7 +116,7 @@
 			children = (
 				7133F83423155133001D434F /* Computer.swift */,
 				7133F8362315514B001D434F /* Stack.swift */,
-				7133F83823155157001D434F /* Application.swift */,
+				7133F83823155157001D434F /* Parser.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -223,7 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7133F83923155157001D434F /* Application.swift in Sources */,
+				7133F83923155157001D434F /* Parser.swift in Sources */,
 				7133F83523155133001D434F /* Computer.swift in Sources */,
 				7133F8372315514B001D434F /* Stack.swift in Sources */,
 				7133F81323154E16001D434F /* ViewController.swift in Sources */,
