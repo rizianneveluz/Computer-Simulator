@@ -8,52 +8,39 @@
 
 import UIKit
 
-class TerminalViewController: UIViewController, ParserDelegate, UITextFieldDelegate {
+class TerminalViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var outputView: UILabel!
     @IBOutlet weak var terminalInputView: UITextField!
 
-    private let parser = Parser()
+    var viewModel: TerminalViewModel?
     private var inputCompletionHandler: ((String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        terminalInputView.becomeFirstResponder()
-        terminalInputView.tintColor = #colorLiteral(red: 0.4234788418, green: 0.8100475669, blue: 0.4512391686, alpha: 1)
-        terminalInputView.delegate = self
         
-        parser.delegate = self
+        viewModel?.terminalOutputUpdated = updateOutputView
+        viewModel?.showPrompt = showPrompt(message:completionHandler:)
+        initTerminalViews()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        showPrompt(message: "[1] Type in commands\n[2] Read from input file", completionHandler: { choice in
-            switch Int(choice) {
-            case 1:
-                if let output = self.outputView.text {
-                    self.outputView.text = "\(output)\nPlease type in commands line by line"
-                    self.showPrompt(message: nil, completionHandler: { line in
-                        self.parser.readLine(line)
-                    })
-                }
-            case 2:
-                self.parser.readFromFile()
-            default:
-                if let output = self.outputView.text {
-                    self.outputView.text = "\(output)\nInvalid input"
-                }
-            }
-        })
+        showPrompt(message: viewModel?.mainPrompt, completionHandler: viewModel?.terminalInputReceived)
     }
     
-    private func showPrompt(message: String?, completionHandler: ((String) -> Void)?) {
-        if let msg = message {
-            outputView.text = msg
-        }
         
+    func showPrompt(message: String?, completionHandler: ((String) -> Void)?) {
+        viewModel?.outputText = message
         inputCompletionHandler = completionHandler
+    }
+    
+    private func initTerminalViews() {
+        terminalInputView.becomeFirstResponder()
+        terminalInputView.tintColor = #colorLiteral(red: 0.4234788418, green: 0.8100475669, blue: 0.4512391686, alpha: 1)
+        terminalInputView.delegate = self
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -61,20 +48,15 @@ class TerminalViewController: UIViewController, ParserDelegate, UITextFieldDeleg
             return false
         }
 
-        if let output = outputView.text {
-            outputView.text = "\(output)\n\(input)"
-        }
+        viewModel?.outputText = input
         textField.text = nil
-        
         inputCompletionHandler?(input)
 
         return true
     }
     
-    func onTerminalOutputUpdated(_ update: String?) {
-        if let out = outputView.text, let input = update {
-            outputView.text = "\(out)\n\(input)"
-        }
+    private func updateOutputView(with text: String) {
+        outputView.text = text
     }
 }
 

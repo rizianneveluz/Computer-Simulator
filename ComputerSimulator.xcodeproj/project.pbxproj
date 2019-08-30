@@ -106,9 +106,7 @@
 				714933FA2317B5840021ACB0 /* Views */,
 				7133F80E23154E16001D434F /* AppDelegate.swift */,
 				7133F81023154E16001D434F /* SceneDelegate.swift */,
-				7133F81423154E17001D434F /* Main.storyboard */,
 				7133F81723154E18001D434F /* Assets.xcassets */,
-				7133F81923154E18001D434F /* LaunchScreen.storyboard */,
 				7133F81C23154E18001D434F /* Info.plist */,
 			);
 			path = ComputerSimulator;
@@ -136,6 +134,8 @@
 		714933FA2317B5840021ACB0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7133F81423154E17001D434F /* Main.storyboard */,
+				7133F81923154E18001D434F /* LaunchScreen.storyboard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
