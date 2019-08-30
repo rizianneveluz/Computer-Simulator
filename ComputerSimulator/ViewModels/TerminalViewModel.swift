@@ -27,7 +27,7 @@ class TerminalViewModel {
         }
     }
     
-    var mainPrompt = "[1] Type in commands\n[2] Read from input file"
+    var mainPrompt = Messages.MainPrompt
     
     private var parser: Parser
     private var history: String?
@@ -40,11 +40,11 @@ class TerminalViewModel {
     func terminalInputReceived(_ choice: String) {
         switch Int(choice) {
         case 1:
-            showPrompt?("Please type in commands line by line. Type exit() to end session.", readLine)
+            showPrompt?(Messages.ManualInputInstruction, readLine)
         case 2:
             parser.readFromFile()
         default:
-            outputText = "Invalid input"
+            outputText = Errors.InvalidInput
         }
     }
         

@@ -33,7 +33,7 @@ struct Stack {
     
     mutating func insert(_ item: StackItem, at index: Int) -> Result{
         if size > 0, index >= size {
-            return .Failure("Program counter is out of bounds.")
+            return .Failure(Errors.PcOutOfBounds)
         }
 
         stack[index] = item

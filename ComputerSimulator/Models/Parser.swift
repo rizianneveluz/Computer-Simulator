@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Parser: ComputerDelegate {
+class Parser {
     private lazy var storage: Dictionary<String, Int> = [String: Int]()
     private lazy var function = [String]()
     private var functionName: String?
@@ -23,9 +23,9 @@ class Parser: ComputerDelegate {
     }
 
     func readFromFile() {
-        latestOutput = "Reading input..."
+        latestOutput = Messages.ReadingInput
 
-        if let path = Bundle.main.path(forResource: "Input", ofType: "txt") {
+        if let path = Bundle.main.path(forResource: Constants.InputFileName, ofType: Constants.InputFileType) {
             do {
                 let data = try String.init(contentsOfFile: path, encoding: .utf8)
                 let myStrings = data.components(separatedBy: .newlines)
@@ -45,8 +45,8 @@ class Parser: ComputerDelegate {
     
     private func parse(line: String) {
         
-        if isExit(line) {
-            latestOutput = "Parser is closed"
+        if line.matches(pattern: Patterns.Exit) {
+            latestOutput = Messages.SessionEnded
             return
         }
         
@@ -54,22 +54,22 @@ class Parser: ComputerDelegate {
             return
         }
         
-        if isFunctionEnd(line) {
-            function.append("END")
+        if line.matches(pattern: Patterns.FunctionEnd) {
+            function.append(Constants.FunctionStackEndMarker)
             return
         }
         
-        if let _ = functionName, function.last != "END" {
+        if let _ = functionName, function.last != Constants.FunctionStackEndMarker {
             function.append(line)
             return
         }
 
-        if isAssignment(line) {
+        if line.matches(pattern: Patterns.Assignment) {
             extractAssignment(from: line)
             return
         }
         
-        if isFunctionDefinition(line) {
+        if line.matches(pattern: Patterns.FunctionDefinition) {
             extractFunctionDefinition(from: line)
             return
         }
@@ -80,62 +80,23 @@ class Parser: ComputerDelegate {
         }
     }
     
-    private func isExit(_ line: String) -> Bool {
-        let pattern = "\\h*exit()\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-        return true
-    }
-    
-    private func isAssignment(_ line: String) -> Bool {
-        // [0 or more spaces][starts with a char or _][0 or more alphanumeric chars or _][0 or more spaces]=[0 or more spaces][1 or more digits][0 or more spaces]
-        let pattern = "\\h*[a-zA-Z_][a-zA-Z0-9_]*\\h*=\\h*[0-9]+\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-        return true
-    }
-    
     private func extractAssignment(from line: String) {
-        let assignment = line.replacingOccurrences(of: " ", with: "").split(separator: "=")
+        let assignment = line.removeWhiteLine().split(separator: "=")
         storage[String(assignment[0])] = Int(assignment[1])
     }
     
-    private func isFunctionDefinition(_ line: String) -> Bool {
-        // [0 or more spaces]def[1 or more spaces][starts with a char][0 or more alphanumeric chars or _][0 or more spaces]
-        let pattern = "\\h*^def\\h+[a-zA-Z][a-zA-Z0-9_]*\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-        return true
-    }
-    
     private func extractFunctionDefinition(from line: String) {
-        functionName = line.components(separatedBy: "def").last?.replacingOccurrences(of: " ", with: "")
-    }
-    
-    private func isFunctionEnd(_ line: String) -> Bool {
-        // [0 or more spaces]end[0 or more spaces]
-        let pattern = "\\h*^end\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-
-        return true
+        functionName = line.components(separatedBy: Constants.FunctionDefinitionStartMarker).last?.removeWhiteLine()
     }
     
     private func isFunctionCall(_ line: String) -> Bool {
         guard let name = functionName else {
             return false
         }
-
+        
         // [0 or more spaces][functionName][1 or more spaces][starts with a char][0 or more alphanumeric chars or _][0 or more spaces]
         let pattern = "\\h*^\(name)\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-        return true
+        return line.matches(pattern: pattern)
     }
     
     private func executeFunctionCall() {
@@ -144,7 +105,7 @@ class Parser: ComputerDelegate {
                 break
             }
             
-            if isComputerInit(line) {
+            if line.matches(pattern: Patterns.ComputerInit) {
                 initializeComputer(line: line)
                 continue
             }
@@ -162,22 +123,13 @@ class Parser: ComputerDelegate {
         }
     }
     
-    private func isComputerInit(_ line: String) -> Bool {
-        // [0 or more spaces][starts with a char or _][0 or more alphanumeric chars or _][0 or more spaces]=[0 or more spaces]Computer.new([1 or more digits])[0 or more spaces]
-        let pattern = "\\h*[a-zA-Z_][a-zA-Z0-9_]*\\h*=\\h*Computer.new\\([0-9]+\\)\\h*"
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-        return true
-    }
-    
     private func initializeComputer(line: String) {
         if let range = line.range(of: "\\d+", options: .regularExpression) {
             guard let stackSize = Int(line[range]) else {
                 return
             }
             
-            let assignment = line.replacingOccurrences(of: " ", with: "").split(separator: "=")
+            let assignment = line.removeWhiteLine().split(separator: "=")
             computerName = String(assignment[0])
             computer = Computer.new(size: stackSize)
             computer?.delegate = self
@@ -190,43 +142,23 @@ class Parser: ComputerDelegate {
         }
         
         let pattern = "\\h*\(name)\\."
-        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            return false
-        }
-
-        return true
+        return line.matches(pattern: pattern)
     }
 
     private func processComputerFunction(_ command: String) {
-        var pattern = "set_address\\([a-zA-Z_]+\\)" // SET_ADDRESS
-        guard let _ = command.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-            
-            pattern = "insert\\(\"[a-zA-Z_]+\"(,[\t\r ]*[a-zA-Z0-9_]+)?\\)*" // INSERT
-            guard let _ = command.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-                
-                pattern = "execute\\(\\)" // EXECUTE
-                guard let _ = command.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
-                    return
-                }
-                
-                computer?.execute()
-                
-                return
-            }
-            
-            performInstruction(command: command)
-            return
+        if command.matches(pattern: Patterns.SetAddress) {
+            setAddress(command: command)
         }
-        
-        setAddress(command: command)
+        else if command.matches(pattern: Patterns.Insert) {
+            performInstruction(command: command)
+        }
+        else if command.matches(pattern: Patterns.Execute) {
+            computer?.execute()
+        }
     }
     
     private func isCommentOrWhiteSpace(_ line: String) -> Bool {
-        guard let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines).first else {
-            return true
-        }
-        
-        return trimmed == "#"
+        return line.trimmingCharacters(in: .whitespacesAndNewlines).first == "#"
     }
     
     private func setAddress(command: String) {
@@ -240,7 +172,7 @@ class Parser: ComputerDelegate {
     }
     
     private func performInstruction(command: String) {
-        let instruction = command.replacingOccurrences(of: "insert(\"", with: "").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: ")", with: "").replacingOccurrences(of: " ", with: "").components(separatedBy: ",")
+        let instruction = command.replacingOccurrences(of: "insert(\"", with: "").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: ")", with: "").removeWhiteLine().components(separatedBy: ",")
         if instruction.count > 1 {
             if let arg = Int(instruction[1]) {
                 computer?.insert(instruction: instruction[0], argument: arg)
@@ -253,7 +185,9 @@ class Parser: ComputerDelegate {
             computer?.insert(instruction: instruction[0], argument: nil)
         }
     }
-    
+}
+
+extension Parser: ComputerDelegate {
     func onComputerOutputAvailable(_ update: String) {
         latestOutput = update
     }
@@ -261,4 +195,17 @@ class Parser: ComputerDelegate {
 
 protocol ParserDelegate {
     func onTerminalOutputUpdated(_ update: String?)
+}
+
+extension String {
+    func matches(pattern: String) -> Bool {
+        guard let _ = self.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
+            return false
+        }
+        return true
+    }
+    
+    func removeWhiteLine() -> String {
+        return self.replacingOccurrences(of: " ", with: "")
+    }
 }

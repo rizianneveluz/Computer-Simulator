@@ -28,7 +28,7 @@ struct Computer {
     mutating func set_address(_ address: Int) -> Result {
         if address >= stack.size {
             // TODO: Proper error handling
-            return .Failure("Program counter is out of bounds.")
+            return .Failure(Errors.PcOutOfBounds)
         }
         programCounter = address
         return .Success(nil)
@@ -45,12 +45,12 @@ struct Computer {
         case Instruction.CALL.rawValue,
              Instruction.PUSH.rawValue:
             guard let arg = argument else {
-                return .Failure("Argument is invalid.")
+                return .Failure(Errors.InvalidArgument)
             }
             stack.insert((instruction, arg), at: programCounter)
         default:
             // TODO: Proper error handling
-            return .Failure("Invalid instruction")
+            return .Failure(Errors.InvalidInstruction)
         }
         
         // TODO: Check result of stack.insert
@@ -96,7 +96,7 @@ struct Computer {
     
     private mutating func computerMultiply() -> Result {
         guard let (_, arg1) = stack.pop() ?? nil, let (_, arg2) = stack.pop() ?? nil, let multiplicand1 = arg1, let multiplicand2 = arg2 else {
-            return .Failure("Cannot execute MULT instruction. An item in the stack is not a valid integer.")
+            return .Failure(Errors.InvalidArgumentMult)
         }
         
         stack.push(("", multiplicand1 * multiplicand2))
@@ -105,7 +105,7 @@ struct Computer {
     
     private mutating func computerCall(argument: Int) -> Result {
         if argument >= stack.size {
-            return .Failure("Cannot execute CALL instruction. Address is out of bounds.")
+            return .Failure(Errors.InvalidArgumentCall)
         }
         
         return set_address(argument)
@@ -113,11 +113,11 @@ struct Computer {
     
     private mutating func computerReturn() -> Result {
         guard let (_, address) = stack.pop() ?? nil, let addr = address else {
-            return .Failure("Cannot execute RET instruction. Address is not a valid integer.")
+            return .Failure(Errors.InvalidArgumentRetInt)
         }
 
         if (addr >= stack.size) {
-            return .Failure("Cannot execute RET instruction. Address is out of bounds.")
+            return .Failure(Errors.InvalidArgumentRetAddress)
         }
 
         programCounter = addr
@@ -125,13 +125,12 @@ struct Computer {
     }
     
     private func computerStop() -> Result {
-        // TODO: Implement stop
         return .Success(nil)
     }
     
     private mutating func computerPrint() -> Result {
         guard let (_, arg) = stack.pop() ?? nil, let value = arg else {
-            return .Failure("Cannot execute PRINT instruction. Value is not a valid integer.")
+            return .Failure(Errors.InvalidArgumentPrint)
         }
         
         delegate?.onComputerOutputAvailable(String(value))
@@ -142,22 +141,15 @@ struct Computer {
         stack.push(("", argument))
         return .Success(nil)
     }
-    
 }
 
-enum Instruction: String {
+fileprivate enum Instruction: String {
     case MULT
     case CALL
     case RET
     case STOP
     case PRINT
     case PUSH
-}
-
-enum Result {
-    // TODO: Change Result's associated values
-    case Success(Int?)
-    case Failure(String)
 }
 
 protocol ComputerDelegate {
