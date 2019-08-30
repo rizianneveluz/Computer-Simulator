@@ -12,6 +12,13 @@ struct Computer {
     
     private var stack: Stack
     private var programCounter: Int
+    var delegate: ComputerDelegate?
+
+    var output = "" {
+        didSet {
+            delegate?.onComputerOutputAvailable(output)
+        }
+    }
     
     static func new(size: Int) -> Computer {
         let stack = Stack.init(size: size)
@@ -127,7 +134,7 @@ struct Computer {
             return .Failure("Cannot execute PRINT instruction. Value is not a valid integer.")
         }
         
-        print(value)
+        delegate?.onComputerOutputAvailable(String(value))
         return .Success(value)
     }
     
@@ -151,4 +158,8 @@ enum Result {
     // TODO: Change Result's associated values
     case Success(Int?)
     case Failure(String)
+}
+
+protocol ComputerDelegate {
+    mutating func onComputerOutputAvailable(_ update: String)
 }

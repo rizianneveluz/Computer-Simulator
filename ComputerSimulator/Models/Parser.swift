@@ -8,21 +8,29 @@
 
 import Foundation
 
-struct Parser {
+class Parser: ComputerDelegate {
     private lazy var storage: Dictionary<String, Int> = [String: Int]()
     private lazy var function = [String]()
     private var functionName: String?
     private var computer: Computer?
     private var computerName: String?
+    var delegate: ParserDelegate?
     
-    init() {
-        // Currently, input is read off of a text file
-        // TODO: Allow user to input code from UI
+    var latestOutput = "" {
+        didSet {
+            delegate?.onTerminalOutputUpdated(latestOutput)
+        }
+    }
+
+    func readFromFile() {
+        latestOutput = "Reading input..."
+
         if let path = Bundle.main.path(forResource: "Input", ofType: "txt") {
             do {
                 let data = try String.init(contentsOfFile: path, encoding: .utf8)
                 let myStrings = data.components(separatedBy: .newlines)
                 for line in myStrings {
+                    latestOutput = "> \(line)"
                     parse(line: line)
                 }
             }
@@ -31,7 +39,16 @@ struct Parser {
         }
     }
     
-    private mutating func parse(line: String) {
+    func readLine(_ line: String) {
+        parse(line: line)
+    }
+    
+    private func parse(line: String) {
+        
+        if isExit(line) {
+            latestOutput = "Parser is closed"
+            return
+        }
         
         if isCommentOrWhiteSpace(line) {
             return
@@ -63,6 +80,14 @@ struct Parser {
         }
     }
     
+    private func isExit(_ line: String) -> Bool {
+        let pattern = "\\h*exit()\\h*"
+        guard let _ = line.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
+            return false
+        }
+        return true
+    }
+    
     private func isAssignment(_ line: String) -> Bool {
         // [0 or more spaces][starts with a char or _][0 or more alphanumeric chars or _][0 or more spaces]=[0 or more spaces][1 or more digits][0 or more spaces]
         let pattern = "\\h*[a-zA-Z_][a-zA-Z0-9_]*\\h*=\\h*[0-9]+\\h*"
@@ -72,7 +97,7 @@ struct Parser {
         return true
     }
     
-    private mutating func extractAssignment(from line: String) {
+    private func extractAssignment(from line: String) {
         let assignment = line.replacingOccurrences(of: " ", with: "").split(separator: "=")
         storage[String(assignment[0])] = Int(assignment[1])
     }
@@ -86,7 +111,7 @@ struct Parser {
         return true
     }
     
-    private mutating func extractFunctionDefinition(from line: String) {
+    private func extractFunctionDefinition(from line: String) {
         functionName = line.components(separatedBy: "def").last?.replacingOccurrences(of: " ", with: "")
     }
     
@@ -113,7 +138,7 @@ struct Parser {
         return true
     }
     
-    private mutating func executeFunctionCall() {
+    private func executeFunctionCall() {
         for line in function {
             if line == "END" {
                 break
@@ -146,7 +171,7 @@ struct Parser {
         return true
     }
     
-    private mutating func initializeComputer(line: String) {
+    private func initializeComputer(line: String) {
         if let range = line.range(of: "\\d+", options: .regularExpression) {
             guard let stackSize = Int(line[range]) else {
                 return
@@ -155,6 +180,7 @@ struct Parser {
             let assignment = line.replacingOccurrences(of: " ", with: "").split(separator: "=")
             computerName = String(assignment[0])
             computer = Computer.new(size: stackSize)
+            computer?.delegate = self
         }
     }
     
@@ -171,7 +197,7 @@ struct Parser {
         return true
     }
 
-    private mutating func processComputerFunction(_ command: String) {
+    private func processComputerFunction(_ command: String) {
         var pattern = "set_address\\([a-zA-Z_]+\\)" // SET_ADDRESS
         guard let _ = command.range(of: pattern, options: .regularExpression, range: nil, locale: nil) else {
             
@@ -203,7 +229,7 @@ struct Parser {
         return trimmed == "#"
     }
     
-    private mutating func setAddress(command: String) {
+    private func setAddress(command: String) {
         let address = command.replacingOccurrences(of: "set_address(", with: "").replacingOccurrences(of: ")", with: "")
         if let addr = Int(address) {
             computer?.set_address(addr)
@@ -213,7 +239,7 @@ struct Parser {
         }
     }
     
-    private mutating func performInstruction(command: String) {
+    private func performInstruction(command: String) {
         let instruction = command.replacingOccurrences(of: "insert(\"", with: "").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: ")", with: "").replacingOccurrences(of: " ", with: "").components(separatedBy: ",")
         if instruction.count > 1 {
             if let arg = Int(instruction[1]) {
@@ -227,4 +253,12 @@ struct Parser {
             computer?.insert(instruction: instruction[0], argument: nil)
         }
     }
+    
+    func onComputerOutputAvailable(_ update: String) {
+        latestOutput = update
+    }
+}
+
+protocol ParserDelegate {
+    func onTerminalOutputUpdated(_ update: String?)
 }
