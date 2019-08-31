@@ -30,6 +30,7 @@
                                             </label>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qgr-1s-rgq">
                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="20"/>
+                                                <color key="tintColor" red="0.36470588240000001" green="0.7843137255" blue="0.37647058820000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="textColor" red="0.36470588240000001" green="0.7843137255" blue="0.37647058820000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="17"/>
                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" keyboardAppearance="alert" enablesReturnKeyAutomatically="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
@@ -69,6 +70,7 @@
                     </view>
                     <connections>
                         <outlet property="outputView" destination="O4E-Qn-Xxu" id="scv-k6-Vry"/>
+                        <outlet property="scrollView" destination="pfn-Gx-SqG" id="TVO-GM-nxd"/>
                         <outlet property="terminalInputView" destination="qgr-1s-rgq" id="9pL-fr-9Ke"/>
                     </connections>
                 </viewController>

@@ -12,7 +12,8 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var outputView: UILabel!
     @IBOutlet weak var terminalInputView: UITextField!
-
+    @IBOutlet weak var scrollView: UIScrollView!
+    
     var viewModel: TerminalViewModel?
     private var inputCompletionHandler: ((String) -> Void)?
     
@@ -22,13 +23,22 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
         
         viewModel?.terminalOutputUpdated = updateOutputView
         viewModel?.showPrompt = showPrompt(message:completionHandler:)
-        initTerminalViews()
+        terminalInputView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         showPrompt(message: viewModel?.mainPrompt, completionHandler: viewModel?.terminalInputReceived)
+        
+        subscribeToKeyboardNotifications()
+        terminalInputView.becomeFirstResponder()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        unsubscribeFromKeyboardNotifications()
     }
     
         
@@ -37,10 +47,26 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
         inputCompletionHandler = completionHandler
     }
     
-    private func initTerminalViews() {
-        terminalInputView.becomeFirstResponder()
-        terminalInputView.tintColor = #colorLiteral(red: 0.4234788418, green: 0.8100475669, blue: 0.4512391686, alpha: 1)
-        terminalInputView.delegate = self
+    private func subscribeToKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func unsubscribeFromKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(notif: NSNotification) {
+        guard let userInfo = notif.userInfo, let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+            return
+        }
+        
+        scrollView.contentInset.bottom = self.view.convert(keyboardFrame.cgRectValue, from: nil).size.height
+    }
+    
+    @objc private func keyboardWillHide(notif: NSNotification) {
+        scrollView.contentInset.bottom = 0
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
