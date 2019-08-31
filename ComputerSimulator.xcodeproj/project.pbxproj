@@ -14,7 +14,7 @@
 		7133F81623154E17001D434F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7133F81423154E17001D434F /* Main.storyboard */; };
 		7133F81823154E18001D434F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7133F81723154E18001D434F /* Assets.xcassets */; };
 		7133F81B23154E18001D434F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7133F81923154E18001D434F /* LaunchScreen.storyboard */; };
-		7133F82623154E18001D434F /* ComputerSimulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F82523154E18001D434F /* ComputerSimulatorTests.swift */; };
+		7133F82623154E18001D434F /* StackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F82523154E18001D434F /* StackTests.swift */; };
 		7133F83523155133001D434F /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F83423155133001D434F /* Computer.swift */; };
 		7133F8372315514B001D434F /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F8362315514B001D434F /* Stack.swift */; };
 		7133F83923155157001D434F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7133F83823155157001D434F /* Parser.swift */; };
@@ -44,7 +44,7 @@
 		7133F81A23154E18001D434F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7133F81C23154E18001D434F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7133F82123154E18001D434F /* ComputerSimulatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ComputerSimulatorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7133F82523154E18001D434F /* ComputerSimulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerSimulatorTests.swift; sourceTree = "<group>"; };
+		7133F82523154E18001D434F /* StackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackTests.swift; sourceTree = "<group>"; };
 		7133F82723154E18001D434F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7133F83223154FC3001D434F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7133F83423155133001D434F /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
@@ -120,7 +120,7 @@
 		7133F82423154E18001D434F /* ComputerSimulatorTests */ = {
 			isa = PBXGroup;
 			children = (
-				7133F82523154E18001D434F /* ComputerSimulatorTests.swift */,
+				7133F82523154E18001D434F /* StackTests.swift */,
 				7133F82723154E18001D434F /* Info.plist */,
 			);
 			path = ComputerSimulatorTests;
@@ -280,7 +280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7133F82623154E18001D434F /* ComputerSimulatorTests.swift in Sources */,
+				7133F82623154E18001D434F /* StackTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

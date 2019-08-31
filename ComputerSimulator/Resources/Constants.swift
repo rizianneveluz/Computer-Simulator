@@ -60,4 +60,5 @@ enum Constants {
     static let InputFileType = "txt"
     static let FunctionStackEndMarker = "END"
     static let FunctionDefinitionStartMarker = "def"
+    static let DefaultComputerStackSize = 100
 }

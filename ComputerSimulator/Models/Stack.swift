@@ -19,8 +19,11 @@ struct Stack {
     }
 
     init(size: Int) {
-        //stack.reserveCapacity(size)
-        stack = [StackItem?](repeating: nil, count: size)
+        var stackSize = size
+        if size < 1 {
+            stackSize = Constants.DefaultComputerStackSize
+        }
+        stack = [StackItem?](repeating: nil, count: stackSize)
     }
 
     mutating func push(_ item: StackItem) {
@@ -31,7 +34,7 @@ struct Stack {
         return stack.popLast()
     }
     
-    mutating func insert(_ item: StackItem, at index: Int) -> Result{
+    mutating func insert(_ item: StackItem, at index: Int) -> Result {
         if size > 0, index >= size {
             return .Failure(Errors.PcOutOfBounds)
         }
@@ -41,6 +44,9 @@ struct Stack {
     }
     
     func peek(at index: Int) -> StackItem? {
+        if index >= size {
+            return nil
+        }
         return stack[index]
     }
 }
