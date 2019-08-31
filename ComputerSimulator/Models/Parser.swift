@@ -153,7 +153,9 @@ class Parser {
             performInstruction(command: command)
         }
         else if command.matches(pattern: Patterns.Execute) {
-            computer?.execute()
+            if case let .Failure(message) = computer?.execute() {
+                latestOutput = message
+            }
         }
     }
     
@@ -164,25 +166,36 @@ class Parser {
     private func setAddress(command: String) {
         let address = command.replacingOccurrences(of: "set_address(", with: "").replacingOccurrences(of: ")", with: "")
         if let addr = Int(address) {
-            computer?.set_address(addr)
+            if case let .Failure(message) = computer?.set_address(addr) {
+                latestOutput = message
+            }
         }
         else if let addr = storage[address] {
-            computer?.set_address(addr)
+            if case let .Failure(message) = computer?.set_address(addr) {
+                latestOutput = message
+            }
         }
     }
     
     private func performInstruction(command: String) {
         let instruction = command.replacingOccurrences(of: "insert(\"", with: "").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: ")", with: "").removeWhiteLine().components(separatedBy: ",")
+
         if instruction.count > 1 {
             if let arg = Int(instruction[1]) {
-                computer?.insert(instruction: instruction[0], argument: arg)
+                if case let .Failure(message) = computer?.insert(instruction: instruction[0], argument: arg) {
+                    latestOutput = message
+                }
             }
             else if let arg = storage[instruction[1]] {
-                computer?.insert(instruction: instruction[0], argument: arg)
+                if case let .Failure(message) = computer?.insert(instruction: instruction[0], argument: arg) {
+                    latestOutput = message
+                }
             }
         }
         else if instruction.count == 1 {
-            computer?.insert(instruction: instruction[0], argument: nil)
+            if case let .Failure(message) = computer?.insert(instruction: instruction[0], argument: nil) {
+                latestOutput = message
+            }
         }
     }
 }

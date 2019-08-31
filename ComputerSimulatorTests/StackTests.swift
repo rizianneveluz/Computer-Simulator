@@ -91,6 +91,9 @@ class StackTests: XCTestCase {
             XCTAssertEqual(insertedItem?.0, item.0, "Item at index is different from inserted item.")
             XCTAssertEqual(insertedItem?.1, item.1, "Item at index is different from inserted item.")
         }
+        else {
+            XCTFail("Expected insert to be successfully executed.")
+        }
     }
     
     func testInsertAtEndIndex() {
@@ -104,7 +107,7 @@ class StackTests: XCTestCase {
             XCTAssertEqual(insertedItem?.1, item.1, "Item at index is different from inserted item.")
         }
         else {
-            XCTFail("Result.Success was expected.")
+            XCTFail("Expected insert to be successfully executed.")
         }
     }
     
@@ -114,7 +117,10 @@ class StackTests: XCTestCase {
 
         let result = stack.insert(item, at: invalidIndex)
         if case let .Failure(message) = result {
-            XCTAssertEqual(message, Errors.PcOutOfBounds, "Stack should return Failure PcOutOfBounds error when an invalid index is given.")
+            XCTAssertEqual(message, Errors.PcOutOfBounds, "Expected insert to return Failure PcOutOfBounds when an invalid index is given.")
+        }
+        else {
+            XCTFail("Expected insert to return Failure PcOutOfBounds when an invalid index is given.")
         }
     }
     
@@ -127,7 +133,7 @@ class StackTests: XCTestCase {
             XCTAssertEqual(item.1, peekedItem?.1, "Item at given index is different from inserted item.")
         }
         else {
-            XCTFail("Expected to insert stack item successfully.")
+            XCTFail("Expected insert to be successfully executed.")
         }
     }
     

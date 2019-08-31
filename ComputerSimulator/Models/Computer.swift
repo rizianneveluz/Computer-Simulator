@@ -11,7 +11,7 @@ import Foundation
 struct Computer {
     
     private var stack: Stack
-    private var programCounter: Int
+    private(set) var programCounter: Int
     var delegate: ComputerDelegate?
 
     var output = "" {
@@ -26,81 +26,96 @@ struct Computer {
     }
     
     mutating func set_address(_ address: Int) -> Result {
-        if address >= stack.size {
-            // TODO: Proper error handling
+        if address >= stack.size || address < 0 {
             return .Failure(Errors.PcOutOfBounds)
         }
+
         programCounter = address
-        return .Success(nil)
+        return .Success(address)
     }
     
     mutating func insert(instruction: String, argument: Int?) -> Result {
-        
+        var result: Result
+
         switch instruction {
         case Instruction.MULT.rawValue,
              Instruction.RET.rawValue,
              Instruction.STOP.rawValue,
              Instruction.PRINT.rawValue:
-            stack.insert((instruction, nil), at: programCounter)
+                result = stack.insert((instruction, nil), at: programCounter)
         case Instruction.CALL.rawValue,
              Instruction.PUSH.rawValue:
-            guard let arg = argument else {
-                return .Failure(Errors.InvalidArgument)
-            }
-            stack.insert((instruction, arg), at: programCounter)
+                guard let arg = argument else {
+                    return .Failure(Errors.InvalidArgument)
+                }
+                result = stack.insert((instruction, arg), at: programCounter)
         default:
-            // TODO: Proper error handling
             return .Failure(Errors.InvalidInstruction)
         }
         
-        // TODO: Check result of stack.insert
-        programCounter += 1
-        return .Success(nil)
+        if case .Success(_) = result {
+            programCounter += 1
+        }
+        
+        return result
     }
     
-    // TODO: Improve implementation and error handling
-    mutating func execute() {
+    mutating func execute() -> Result {
+        var result = Result.Success(nil)
         var instruction = ""
-        var argument: Int?
+        
+        guard let _ = stack.peek(at: programCounter) else {
+            return .Failure(Errors.NoInstructionAtAddress)
+        }
+
         repeat {
-            if let (instruction, argument) = stack.peek(at: programCounter) {
-                switch instruction {
+            if let (instr, argument) = stack.peek(at: programCounter) {
+                instruction = instr
+
+                switch instr {
                 case Instruction.MULT.rawValue:
-                    computerMultiply()
+                    result = computerMultiply()
                 case Instruction.CALL.rawValue:
                     guard let arg = argument else {
-                        return
+                        return .Failure(Errors.InvalidArgumentCall)
                     }
-                    computerCall(argument: arg)
+                    result = computerCall(argument: arg)
                 case Instruction.RET.rawValue:
-                    computerReturn()
+                    result = computerReturn()
                 case Instruction.PRINT.rawValue:
-                    computerPrint()
+                    result = computerPrint()
                 case Instruction.PUSH.rawValue:
                     guard let arg = argument else {
-                        return
+                        return .Failure(Errors.InvalidArgument)
                     }
                     computerPush(argument: arg)
+                case Instruction.STOP.rawValue:
+                    return result
                 default:
-                    return
+                    return .Failure(Errors.InvalidInstruction)
                 }
                 
-                if (instruction != Instruction.CALL.rawValue && instruction != Instruction.RET.rawValue) {
-                    programCounter += 1
+                if case .Failure(_) = result {
+                    return result
                 }
-                
+            }
+            
+            if (instruction != Instruction.CALL.rawValue && instruction != Instruction.RET.rawValue) {
+                programCounter += 1
             }
         }
-        while instruction != Instruction.STOP.rawValue
+            while instruction != Instruction.STOP.rawValue || programCounter < stack.size
+        return result
     }
     
     private mutating func computerMultiply() -> Result {
-        guard let (_, arg1) = stack.pop() ?? nil, let (_, arg2) = stack.pop() ?? nil, let multiplicand1 = arg1, let multiplicand2 = arg2 else {
+        guard let (instr1, arg1) = stack.pop() ?? nil, let (instr2, arg2) = stack.pop() ?? nil, let factor1 = arg1, let factor2 = arg2, instr1 == "", instr2 == "" else {
             return .Failure(Errors.InvalidArgumentMult)
         }
         
-        stack.push(("", multiplicand1 * multiplicand2))
-        return .Success(nil)
+        let product = factor1 * factor2
+        stack.push(("", product))
+        return .Success(product)
     }
     
     private mutating func computerCall(argument: Int) -> Result {
@@ -121,15 +136,11 @@ struct Computer {
         }
 
         programCounter = addr
-        return .Success(nil)
-    }
-    
-    private func computerStop() -> Result {
-        return .Success(nil)
+        return .Success(addr)
     }
     
     private mutating func computerPrint() -> Result {
-        guard let (_, arg) = stack.pop() ?? nil, let value = arg else {
+        guard let (instruction, arg) = stack.pop() ?? nil, let value = arg, instruction == ""  else {
             return .Failure(Errors.InvalidArgumentPrint)
         }
         
@@ -137,9 +148,8 @@ struct Computer {
         return .Success(value)
     }
     
-    private mutating func computerPush(argument: Int) -> Result {
+    private mutating func computerPush(argument: Int) {
         stack.push(("", argument))
-        return .Success(nil)
     }
 }
 

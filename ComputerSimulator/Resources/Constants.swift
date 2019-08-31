@@ -10,6 +10,7 @@ import Foundation
 
 enum Errors {
     static let PcOutOfBounds = NSLocalizedString("ERROR_PC_OUT_OF_BOUNDS", comment: "")
+    static let NoInstructionAtAddress = NSLocalizedString("ERROR_NO_INSTRUCTION_AT_ADDRESS", comment: "")
     static let InvalidArgument = NSLocalizedString("ERROR_INVALID_ARGUMENT", comment: "")
     static let InvalidInstruction = NSLocalizedString("ERROR_INVALID_INSTRUCTION", comment: "")
     static let InvalidInput = NSLocalizedString("ERROR_INVALID_INPUT", comment: "")
