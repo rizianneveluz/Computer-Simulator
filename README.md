@@ -37,39 +37,39 @@ For some design decisions made during development, please see Design Considerati
 The application's project structure is briefly described below:
 
 - Models
-- Computer - models the computer simulator's main functionalities
-- Stack - models the Computer's internal data structure for command execution
-- Parser - models a parser that serves as the mediator between the user and the computer simulator
+  - Computer - models the computer simulator's main functionalities
+  - Stack - models the Computer's internal data structure for command execution
+  - Parser - models a parser that serves as the mediator between the user and the computer simulator
 - ViewControllers
--  View controller for the only screen. Presentation logic here is limited; most are delegated to the view model.
+  -  View controller for the only screen. Presentation logic here is limited; most are delegated to the view model.
 - ViewModels
--  View model for the TerminalViewController. This drives the terminal view's content and facilitates communication with the parser.
+  - View model for the TerminalViewController. This drives the terminal view's content and facilitates communication with the parser.
 - Views
-- The Main storyboard and the Launch Screen
+  - The Main storyboard and the Launch Screen
 - Resources
-- Image assets
-- A Constants file which holds all arbitrary constant values used throughout the application
-- Localizable.strings which contains the app's static string values in the base language (English). This serves as provision for localization in the future.
-- Input.txt which the parser can use to read a batch of commands
+  - Image assets
+  - A Constants file which holds all arbitrary constant values used throughout the application
+  - Localizable.strings which contains the app's static string values in the base language (English). This serves as provision for localization in the future.
+  - Input.txt which the parser can use to read a batch of commands
 
 #### II.B. Design Considerations
 
 - Storyboard vs Building the UI programmatically / via XIBs
-- Storyboard-based UIs can get tangled quickly when building a complex application. However, for this use case, the fundamental functionalities are fairly small which makes building through the Storyboard quicker and simpler.
+  - Storyboard-based UIs can get tangled quickly when building a complex application. However, for this use case, the fundamental functionalities are fairly small which makes building through the Storyboard quicker and simpler.
 
 - Structs vs Class
-- For simpler data types, structs were preferred over classes in accordance to Apple's documentation
+  - For simpler data types, structs were preferred over classes in accordance to Apple's documentation
 
 - Using A Result(Success/Failure) type to check the result of an execution instead of throwing an error when failures happen
-- When an erroroneous input is encountered, the application mostly handles them internally and returns a Failure case instead of throwing
+  - When an erroroneous input is encountered, the application mostly handles them internally and returns a Failure case instead of throwing
 
 ---
 ## III. Future Improvements and Known Issues
 A list of improvements and known issues, some of which are also included as TODO or FIXME comments in the code, are as follows:
 
 - Improve the Parser model.
-- It is a very rough implementation of a parser, and is primarily designed to work for the given input.
-- It only supports a single function definition. It may be improved by allowing multiple and/or nested function definitions. This requires consideration for a multitude of different scenarios.
+  - It is a very rough implementation of a parser, and is primarily designed to work for the given input.
+  - It only supports a single function definition. It may be improved by allowing multiple and/or nested function definitions. This requires consideration for a multitude of different scenarios.
 - Improve UX by using attributed strings with varied font colors based on the output type (e.g. error message, instructions, execution output) to aid in readability
 - Display error messages to keep the user updated on execution status. Currently, error messages are not sent to the terminal view.
 - Adjust scrollview when device changes orientation.
