@@ -89,7 +89,6 @@
 				7133F80D23154E16001D434F /* ComputerSimulator */,
 				7133F82423154E18001D434F /* ComputerSimulatorTests */,
 				7133F80C23154E16001D434F /* Products */,
-				7133F83A23155183001D434F /* Input.txt */,
 				7133F83223154FC3001D434F /* README.md */,
 			);
 			sourceTree = "<group>";
@@ -113,7 +112,6 @@
 				719C04122319A70400602FFF /* Resources */,
 				7133F80E23154E16001D434F /* AppDelegate.swift */,
 				7133F81023154E16001D434F /* SceneDelegate.swift */,
-				7133F81723154E18001D434F /* Assets.xcassets */,
 				7133F81C23154E18001D434F /* Info.plist */,
 			);
 			path = ComputerSimulator;
@@ -159,8 +157,10 @@
 		719C04122319A70400602FFF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7133F81723154E18001D434F /* Assets.xcassets */,
 				719C04132319A7B600602FFF /* Localizable.strings */,
 				719C04152319A85100602FFF /* Constants.swift */,
+				7133F83A23155183001D434F /* Input.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
