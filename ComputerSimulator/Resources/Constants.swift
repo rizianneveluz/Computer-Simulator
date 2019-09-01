@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A set of localizable error messages
 enum Errors {
     static let PcOutOfBounds = NSLocalizedString("ERROR_PC_OUT_OF_BOUNDS", comment: "")
     static let NoInstructionAtAddress = NSLocalizedString("ERROR_NO_INSTRUCTION_AT_ADDRESS", comment: "")
@@ -21,6 +22,7 @@ enum Errors {
     static let InvalidArgumentPrint = NSLocalizedString("ERROR_INVALID_ARGUMENT_PRINT", comment: "")
 }
 
+/// A set of localizable informational messages
 enum Messages {
     static let ReadingInput = NSLocalizedString("MESSAGE_READING_INPUT", comment: "")
     static let SessionEnded = NSLocalizedString("MESSAGE_SESSION_ENDED", comment: "")
@@ -29,8 +31,12 @@ enum Messages {
     static let ReadFromFileInstruction = NSLocalizedString("MESSAGE_READ_FROM_FILE_INSTRUCTION", comment: "")
 }
 
+/// A set of regular expression strings for matching against commands
 enum Patterns {
-    static let Exit = "\\h*exit()\\h*"
+    // TODO: Improve precision of these regular expressions
+
+    // exit()
+    static let Exit = "^\\h*exit\\(\\)\\h*$"
     
     // [0 or more spaces][starts with a char or _][0 or more alphanumeric chars or _][0 or more spaces]=[0 or more spaces][1 or more digits][0 or more spaces]
     static let Assignment = "\\h*[a-zA-Z_][a-zA-Z0-9_]*\\h*=\\h*[0-9]+\\h*"
@@ -44,19 +50,27 @@ enum Patterns {
     // [0 or more spaces][starts with a char or _][0 or more alphanumeric chars or _][0 or more spaces]=[0 or more spaces]Computer.new([1 or more digits])[0 or more spaces]
     static let ComputerInit = "\\h*[a-zA-Z_][a-zA-Z0-9_]*\\h*=\\h*Computer.new\\([0-9]+\\)\\h*"
 
-    static let SetAddress = "set_address\\([a-zA-Z_]+\\)"
+    static let SetAddress = "set_address\\([a-zA-Z0-9_]+\\)"
     
     static let Insert = "insert\\(\"[a-zA-Z_]+\"(,[\t\r ]*[a-zA-Z0-9_]+)?\\)*"
     
     static let Execute = "execute\\(\\)"
 }
 
+/// A set of values indicating the result of an execution
 enum Result {
-    // TODO: Change Result's associated values
+    /// Indicates that the execution was successful.
+    ///
+    /// The associated value may contain a value significant to the executed instruction.
     case Success(Int?)
+    
+    /// Indicates that the execution failed.
+    ///
+    /// The associated value should contain an error message for the user.
     case Failure(String)
 }
 
+/// A set of constants used throughout the application
 enum Constants {
     static let InputFileName = "Input"
     static let InputFileType = "txt"
