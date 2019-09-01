@@ -1,0 +1,23 @@
+/* 
+  Localizable.strings
+  ComputerSimulator
+
+  Created by Rizianne Veluz on 31/08/2019.
+  Copyright © 2019 Rizianne Veluz. All rights reserved.
+*/
+
+"ERROR_PC_OUT_OF_BOUNDS" = "Program counter is out of bounds.";
+"ERROR_NO_INSTRUCTION_AT_ADDRESS" = "There is no instruction at the current address.";
+"ERROR_INVALID_ARGUMENT" = "Invalid argument.";
+"ERROR_INVALID_INSTRUCTION" = "Invalid instruction.";
+"ERROR_INVALID_INPUT" = "Invalid input.";
+"ERROR_INVALID_ARGUMENT_MULT" = "Cannot execute MULT instruction. An item in the stack is not a valid integer.";
+"ERROR_INVALID_ARGUMENT_CALL" = "Cannot execute CALL instruction. Address is out of bounds.";
+"ERROR_INVALID_ARGUMENT_RET_INT" = "Cannot execute RET instruction. Address is not a valid integer.";
+"ERROR_INVALID_ARGUMENT_RET_ADDRESS" = "Cannot execute RET instruction. Address is out of bounds.";
+"ERROR_INVALID_ARGUMENT_PRINT" = "Cannot execute PRINT instruction. Value is not a valid integer.";
+"MESSAGE_READING_INPUT" = "Reading input...";
+"MESSAGE_SESSION_ENDED" = "Session has ended.";
+"MESSAGE_MENU_PROMPT" = "[1] Type in commands\n[2] Read from input file";
+"MESSAGE_READ_FROM_FILE_INSTRUCTION" = "User can type in more commands after input is read and processed. Type exit() to end session and return to main menu.";
+"MESSAGE_MANUAL_INPUT_INSTRUCTION" = "Please type in commands line by line. Type exit() to end session and return to main menu.";
