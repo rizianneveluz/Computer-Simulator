@@ -35,6 +35,8 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
         
         viewModel?.didUpdateHistory = { [weak self] in
             self?.terminalOutputView.text = self?.viewModel?.history
+            self?.view.layoutIfNeeded()
+            self?.scrollToBottom()
         }
         
         viewModel?.didStartUp()
@@ -90,6 +92,16 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
         inputCompletionHandler?(input)
 
         return true
+    }
+    
+    private func scrollToBottom() {
+        if (scrollView.contentSize.height + scrollView.contentInset.bottom < scrollView.bounds.height) {
+            return
+        }
+
+        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height + scrollView.contentInset.bottom - scrollView.bounds.size.height)
+        
+        scrollView.setContentOffset(bottomOffset, animated: true)
     }
 }
 

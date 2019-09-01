@@ -69,9 +69,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="outputView" destination="O4E-Qn-Xxu" id="scv-k6-Vry"/>
                         <outlet property="scrollView" destination="pfn-Gx-SqG" id="TVO-GM-nxd"/>
                         <outlet property="terminalInputView" destination="qgr-1s-rgq" id="9pL-fr-9Ke"/>
+                        <outlet property="terminalOutputView" destination="O4E-Qn-Xxu" id="scv-k6-Vry"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
