@@ -18,5 +18,6 @@
 "ERROR_INVALID_ARGUMENT_PRINT" = "Cannot execute PRINT instruction. Value is not a valid integer.";
 "MESSAGE_READING_INPUT" = "Reading input...";
 "MESSAGE_SESSION_ENDED" = "Session has ended.";
-"MESSAGE_MAIN_PROMPT" = "[1] Type in commands\n[2] Read from input file";
-"MESSAGE_MANUAL_INPUT_INSTRUCTION" = "Please type in commands line by line. Type exit() to end session.";
+"MESSAGE_MENU_PROMPT" = "[1] Type in commands\n[2] Read from input file";
+"MESSAGE_READ_FROM_FILE_INSTRUCTION" = "User can type in more commands after input is read and processed. Type exit() to end session and return to main menu.";
+"MESSAGE_MANUAL_INPUT_INSTRUCTION" = "Please type in commands line by line. Type exit() to end session and return to main menu.";

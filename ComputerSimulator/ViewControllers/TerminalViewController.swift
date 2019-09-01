@@ -10,7 +10,7 @@ import UIKit
 
 class TerminalViewController: UIViewController, UITextFieldDelegate {
     
-    @IBOutlet weak var outputView: UILabel!
+    @IBOutlet weak var terminalOutputView: UILabel!
     @IBOutlet weak var terminalInputView: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
     
@@ -21,15 +21,28 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        viewModel?.terminalOutputUpdated = updateOutputView
-        viewModel?.showPrompt = showPrompt(message:completionHandler:)
+        viewModel?.showMenuPrompt = { [weak self] in
+            self?.receiveUserInput(completionHandler: { choice in
+                self?.viewModel?.didReceiveMenuInput(choice: choice)
+            })
+        }
+        
+        viewModel?.showCommandPrompt = { [weak self] in
+            self?.receiveUserInput(completionHandler: { command in
+                self?.viewModel?.didReceiveCommandInput(command: command)
+            })
+        }
+        
+        viewModel?.didUpdateHistory = { [weak self] in
+            self?.terminalOutputView.text = self?.viewModel?.history
+        }
+        
+        viewModel?.didStartUp()
         terminalInputView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        showPrompt(message: viewModel?.mainPrompt, completionHandler: viewModel?.terminalInputReceived)
         
         subscribeToKeyboardNotifications()
         terminalInputView.becomeFirstResponder()
@@ -42,8 +55,7 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
     }
     
         
-    func showPrompt(message: String?, completionHandler: ((String) -> Void)?) {
-        viewModel?.outputText = message
+    func receiveUserInput(completionHandler: ((String) -> Void)?) {
         inputCompletionHandler = completionHandler
     }
     
@@ -74,15 +86,10 @@ class TerminalViewController: UIViewController, UITextFieldDelegate {
             return false
         }
 
-        viewModel?.outputText = input
         textField.text = nil
         inputCompletionHandler?(input)
 
         return true
-    }
-    
-    private func updateOutputView(with text: String) {
-        outputView.text = text
     }
 }
 

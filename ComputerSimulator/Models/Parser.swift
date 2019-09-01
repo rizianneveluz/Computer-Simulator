@@ -18,7 +18,7 @@ class Parser {
     
     var latestOutput = "" {
         didSet {
-            delegate?.onTerminalOutputUpdated(latestOutput)
+            delegate?.didFinishParsing(message: latestOutput)
         }
     }
 
@@ -47,6 +47,8 @@ class Parser {
         
         if line.matches(pattern: Patterns.Exit) {
             latestOutput = Messages.SessionEnded
+            resetParser()
+            delegate?.didEndSession()
             return
         }
         
@@ -78,6 +80,14 @@ class Parser {
             executeFunctionCall()
             return
         }
+    }
+    
+    private func resetParser() {
+        storage = [String: Int]()
+        function = [String]()
+        functionName = nil
+        computer =  nil
+        computerName = nil
     }
     
     private func extractAssignment(from line: String) {
@@ -207,7 +217,8 @@ extension Parser: ComputerDelegate {
 }
 
 protocol ParserDelegate {
-    func onTerminalOutputUpdated(_ update: String?)
+    func didFinishParsing(message: String)
+    func didEndSession()
 }
 
 extension String {

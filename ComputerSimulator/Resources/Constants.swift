@@ -24,8 +24,9 @@ enum Errors {
 enum Messages {
     static let ReadingInput = NSLocalizedString("MESSAGE_READING_INPUT", comment: "")
     static let SessionEnded = NSLocalizedString("MESSAGE_SESSION_ENDED", comment: "")
-    static let MainPrompt = NSLocalizedString("MESSAGE_MAIN_PROMPT", comment: "")
+    static let MenuPrompt = NSLocalizedString("MESSAGE_MENU_PROMPT", comment: "")
     static let ManualInputInstruction = NSLocalizedString("MESSAGE_MANUAL_INPUT_INSTRUCTION", comment: "")
+    static let ReadFromFileInstruction = NSLocalizedString("MESSAGE_READ_FROM_FILE_INSTRUCTION", comment: "")
 }
 
 enum Patterns {

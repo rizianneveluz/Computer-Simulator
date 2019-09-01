@@ -10,52 +10,69 @@ import Foundation
 
 class TerminalViewModel {
     
-    var terminalOutputUpdated: ((String) -> Void)?
-    var showPrompt: ((String?, ((String) -> Void)?) -> Void)?
-
-    var outputText: String? {
-        didSet {
-            if let newText = outputText {
-                if let oldText = history {
-                    history = "\(oldText)\n\(newText)"
-                }
-                else {
-                    history = newText
-                }
-                terminalOutputUpdated?(history ?? "")
-            }
-        }
+    
+    var didReceiveMenuInput: ((String) -> Void)?
+    var didReceiveCommandInput: ((String) -> Void)?
+    
+    // MARK - Output properties
+    var showMenuPrompt: (() -> Void)?
+    var showCommandPrompt: (() -> Void)?
+    var didUpdateHistory: (() -> Void)?
+    
+    // MARK - Input functions
+    func didStartUp() {
+        didUpdateHistory?()
+        showMenuPrompt?()
     }
     
-    var mainPrompt = Messages.MainPrompt
-    
+    // MARK - Private properties
     private var parser: Parser
-    private var history: String?
+    private(set) var history = Messages.MenuPrompt
 
     init(withParser parser: Parser) {
         self.parser = parser
         self.parser.delegate = self
     }
 
-    func terminalInputReceived(_ choice: String) {
+    func didReceiveMenuInput(choice: String) {
+        appendToHistory(choice)
+
         switch Int(choice) {
         case 1:
-            showPrompt?(Messages.ManualInputInstruction, readLine)
+            appendToHistory(Messages.ManualInputInstruction)
+            showCommandPrompt?()
         case 2:
             parser.readFromFile()
+            appendToHistory(Messages.ReadFromFileInstruction)
+            showCommandPrompt?()
         default:
-            outputText = Errors.InvalidInput
+            appendToHistory(Errors.InvalidInput)
         }
     }
-        
-    private func readLine(_ line: String) {
-        parser.readLine(line)
+    
+    func didReceiveCommandInput(command: String) {
+        appendToHistory(command)
+        parser.readLine(command)
+    }
+    
+    private func returnToMainMenu() {
+        appendToHistory(Messages.MenuPrompt)
+        showMenuPrompt?()
+    }
+    
+    private func appendToHistory(_ line: String) {
+        history = "\(history)\n\(line)"
+        didUpdateHistory?()
     }
 }
 
 extension TerminalViewModel: ParserDelegate {
 
-    func onTerminalOutputUpdated(_ update: String?) {
-        outputText = update
+    func didFinishParsing(message: String) {
+        appendToHistory(message)
+    }
+    
+    func didEndSession() {
+        returnToMainMenu()
     }
 }
